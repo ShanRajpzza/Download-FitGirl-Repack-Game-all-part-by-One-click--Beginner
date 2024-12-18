@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import time
+import re
 
 #Automatically Browser Closes Error Fix
 options = webdriver.ChromeOptions() 
@@ -16,6 +16,11 @@ link.click()
 
 links = driver.find_elements(By.XPATH, '//a[starts-with(@href, "https://datanodes.to/")]')
 
+pattern = r'part\d+'
+
 # Print all the parts' hrefs
 for link in links:
-    print(link.get_attribute("href"))
+    parts = link.get_attribute("href")
+    match = re.search(pattern, parts)
+    if match:
+        print(match.group())
