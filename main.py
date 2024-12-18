@@ -16,11 +16,18 @@ link.click()
 
 links = driver.find_elements(By.XPATH, '//a[starts-with(@href, "https://datanodes.to/")]')
 
-pattern = r'part\d+'
+pattern = r'part(\d+)'  # Capture the number for sorting
+parts = []
 
-# Print all the parts' hrefs
 for link in links:
-    parts = link.get_attribute("href")
-    match = re.search(pattern, parts)
+    href = link.get_attribute("href")
+    match = re.search(pattern, href)
     if match:
-        print(match.group())
+        parts.append((int(match.group(1)), f"Part {match.group(1).zfill(3)}"))  # Store as (number, formatted string)
+
+# Sort parts numerically and extract the formatted strings
+sorted_parts = [part[1] for part in sorted(parts)]
+
+# Print the sorted parts
+for part in sorted_parts:
+    print(part)
