@@ -8,8 +8,9 @@ import os
 download_dir = r"C:\Users\Rajapazza\Downloads\pyhon_test"
 if not os.path.exists(download_dir):
     os.makedirs(download_dir)
+    print("Unable to find the folder, Created a new Folder")
 else:
-    print("Folder Located")
+    print("Your download folder has been found")
 
 #Set download preferences to specify the download folder
 prefs = {
@@ -18,6 +19,8 @@ prefs = {
     "download.directory_upgrade": True,
     "safebrowsing.enabled": True
 }
+
+url = input("Enter FitGirl-Repacks game url here : ")
 
 #Automatically Browser Closes Error Fix
 options = webdriver.ChromeOptions() 
@@ -37,52 +40,47 @@ def wait_for_download(download_folder, timeout=1200):
             return True
         time.sleep(1)
     
-    print("Download timed out.")
+    print("Download timed out.Try again please")
     return False
 
-#Site URL
-driver.get('https://fitgirl-repacks.site/grand-theft-auto-v/') 
+# Get game url
+driver.get(url)
 
-# Click the link
+# Click the game parts dropdown
 link = driver.find_element(By.CLASS_NAME, "su-spoiler-title")
 link.click()
 
+# Find downloadble parts link
 links = driver.find_elements(By.XPATH, '//a[starts-with(@href, "https://datanodes.to/")]')
 
-pattern = r'part(\d+)'  # Capture the number for sorting
+#Print game all parts
+pattern = r'part(\d+)'
 parts = []
-
 for link in links:
     href = link.get_attribute("href")
     match = re.search(pattern, href)
     if match:
-        parts.append((int(match.group(1)), f"Part {match.group(1).zfill(3)}"))  # Store as (number, formatted string)
-
-# Sort parts numerically and extract the formatted strings
+        parts.append((int(match.group(1)), f"Part {match.group(1).zfill(3)}"))
 sorted_parts = [part[1] for part in sorted(parts)]
-
-# Print the sorted parts
 for part in sorted_parts:
     print(part)
 
+# Download each parts, one by one
 x = 0
-
 for parts in links:
     parts.click()
     driver.switch_to.window(driver.window_handles[1])
-    print("Now In 2nd Page")
     time.sleep(10)
     download_bt = driver.find_elements(By.ID, 'method_free')
     if download_bt:
         download_bt[0].click()
     else:
-        print("Download button not found")
+        print("Download button not found in page 2")
 
     driver.switch_to.window(driver.window_handles[2])
     try:
         driver.switch_to.window(driver.window_handles[2])
         driver.close()
-        print("Page closed")
     except IndexError:
         print("No page found")
 
@@ -93,7 +91,6 @@ for parts in links:
     try:
         driver.switch_to.window(driver.window_handles[2])
         driver.close()
-        print("Page closed")
     except IndexError:
         print("No page found")
 
@@ -111,3 +108,4 @@ for parts in links:
     else:
         print("Download did not complete within the timeout period.")
 
+print("Game All Parts Are Downloaded")
