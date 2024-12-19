@@ -26,7 +26,7 @@ options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(options=options)
 
 #Define monitor the download folder for completed download
-def wait_for_download(download_folder, timeout=600):
+def wait_for_download(download_folder, timeout=1200):
     start_time = time.time()
     
     while time.time() - start_time < timeout:
@@ -65,6 +65,8 @@ sorted_parts = [part[1] for part in sorted(parts)]
 for part in sorted_parts:
     print(part)
 
+x = 0
+
 for parts in links:
     parts.click()
     driver.switch_to.window(driver.window_handles[1])
@@ -102,4 +104,10 @@ for parts in links:
     driver.switch_to.window(driver.window_handles[1])
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
+
+    if wait_for_download(download_dir):
+        pp = x+1
+        print("Part", pp , "Downloaded")
+    else:
+        print("Download did not complete within the timeout period.")
 
