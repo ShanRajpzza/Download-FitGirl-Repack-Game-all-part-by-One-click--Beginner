@@ -25,7 +25,20 @@ options.add_experimental_option('detach', True)
 options.add_experimental_option("prefs", prefs)
 driver = webdriver.Chrome(options=options)
 
-
+#Define monitor the download folder for completed download
+def wait_for_download(download_folder, timeout=600):
+    start_time = time.time()
+    
+    while time.time() - start_time < timeout:
+        files = os.listdir(download_folder)
+        incomplete_files = [f for f in files if f.endswith('.crdownload')]
+        
+        if not incomplete_files:
+            return True
+        time.sleep(1)
+    
+    print("Download timed out.")
+    return False
 
 #Site URL
 driver.get('https://fitgirl-repacks.site/grand-theft-auto-v/') 
@@ -86,5 +99,7 @@ for parts in links:
     time.sleep(5)
     buttondl = driver.find_element(By.XPATH, "//button[@type='submit' and contains(@class, 'bg-blue-600')]")
     buttondl.click()
+    driver.switch_to.window(driver.window_handles[1])
+    driver.close()
+    driver.switch_to.window(driver.window_handles[0])
 
-    break
